@@ -152,7 +152,7 @@ Private Function FastSimpleSimilarity(ByVal targetClean As String, ByVal targetT
     End If
     
     ' 2. Tail exact match (for prefix handling)
-    If targetTail = candidateClean Or targetTail = candidateTail Then
+    If targetTail = candidateClean Or targetClean = candidateTail Or targetTail = candidateTail Then
         FastSimpleSimilarity = 0.95
         Exit Function
     End If
@@ -173,7 +173,7 @@ Private Function FastSimpleSimilarity(ByVal targetClean As String, ByVal targetT
         End If
     End If
     
-    ' 5. Simple word overlap (count common words) - but penalize prefix-only matches
+    ' 5. Simple word overlap (count common words)
     Dim targetWords() As String, candidateWords() As String
     targetWords = Split(targetClean)
     candidateWords = Split(candidateClean)
@@ -184,27 +184,6 @@ Private Function FastSimpleSimilarity(ByVal targetClean As String, ByVal targetT
     
     If totalWords > 0 Then
         Dim wordScore As Double: wordScore = commonWords / totalWords
-        
-        ' Penalize if the match is only in the prefix part (before colon)
-        If InStr(targetClean, ":") > 0 Then
-            Dim targetTailWords() As String
-            targetTailWords = Split(targetTail)
-            Dim tailCommonWords As Long: tailCommonWords = 0
-            
-            ' Count how many common words are in the tail
-            Dim w As Variant
-            For Each w In targetTailWords
-                If IsWordInArray(w, candidateWords) Then
-                    tailCommonWords = tailCommonWords + 1
-                End If
-            Next w
-            
-            ' If no tail words match, heavily penalize the score
-            If tailCommonWords = 0 Then
-                wordScore = wordScore * 0.3  ' 70% penalty for prefix-only matches
-            End If
-        End If
-        
         If wordScore > bestScore Then bestScore = wordScore
     End If
     
@@ -249,17 +228,6 @@ Private Function CountCommonWords(ByRef words1() As String, ByRef words2() As St
     Next i
     
     CountCommonWords = count
-End Function
-
-Private Function IsWordInArray(ByVal word As String, ByRef wordArray() As String) As Boolean
-    Dim i As Long
-    For i = LBound(wordArray) To UBound(wordArray)
-        If wordArray(i) = word Then
-            IsWordInArray = True
-            Exit Function
-        End If
-    Next i
-    IsWordInArray = False
 End Function
 
 '==================== FIND SHEET ====================
