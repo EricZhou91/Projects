@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+~$*.*
+*.tmp
+
+# Never commit real spreadsheets
+*.xlsx
+*.xlsm
+*.xls
+
+# Allow only synthetic examples
+!examples/sample_raw_data.xlsx
+!examples/sample_structure.xlsx
+!examples/sample_outputs.xlsx
