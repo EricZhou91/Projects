@@ -157,5 +157,3 @@ for csv_file in glob.glob('data/*.csv'):
 
 
 ---
-
-**Happy Financial Automation! 💰✨** 
